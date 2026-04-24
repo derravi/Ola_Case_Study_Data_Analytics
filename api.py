@@ -21,3 +21,29 @@ app = FastAPI(title="Olla Driver Churn prediction")
 @app.get("")
 def default_rt():
     return {"message":"Olla Driving Churn Prediciton ML Model"}
+
+@app.post("/prediction")
+def predict(data : Ollama_driving):
+
+    df = pd.DataFrame([{
+        "Age" : data.age,
+        "Gender" : data.gender,
+        "Day" : data.day,
+        "Month": data.month,
+        "Year" : data.year,
+        "Education_Level" : data.education_level,
+        "Income" : data.income,
+        "Joining Designation" : data.joining_designation,
+        "Grade" : data.grade,
+        "Total Business Value" : data.total_business_value,
+        "Quarterly Rating" : data.quarterly_rating
+    }])
+
+    df_std = std.transform(df)
+
+    prediction_output = lr.predict(df_std)[0]
+
+    if prediction_output == 0:
+        return {"message":"The driver is not likely to churn."}
+    else:
+        return {"message":"The driver is likely to churn."}
