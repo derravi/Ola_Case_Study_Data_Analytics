@@ -1,17 +1,24 @@
-from fastapi import FastAPI
+from fastapi import FastAPI,HTTPException
 from Schema.pydantic_model import Ollama_driving
 import pickle
 import pandas as pd
 import numpy as np
 
+data = None
+
 try:
     with open("Model/ola_driving_churn_model.pkl","rb") as f:
         data = pickle.load(f)
 
-except FileNotFoundError as e:
-    print(f"Error : {f}")
+except Exception as e:
+    raise RuntimeError(f"Model loading failed: {e}")
+
 except Exception as e2:
     print(f"Error : {e2}")
+
+std = data["Standard_scaler"]
+lr = data["Logistic_regression"]
+
 
 std = data["Standard_scaler"]
 lr = data["Logistic_regression"]
@@ -39,10 +46,12 @@ def predict(data : Ollama_driving):
         "Quarterly Rating" : data.quarterly_rating
     }])
 
-    df_std = std.transform(df)
-
-    prediction_output = lr.predict(df_std)[0]
-
+    try:
+        df_std = std.transform(df)
+        prediction_output = lr.predict(df_std)[0]
+    except Exception as e3:
+        raise HTTPException(status_code=500,detail=str(e3))
+    
     if prediction_output == 0:
         return {"message":"The driver is not likely to churn."}
     else:
