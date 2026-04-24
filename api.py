@@ -16,3 +16,8 @@ except Exception as e2:
 std = data["Standard_scaler"]
 lr = data["Logistic_regression"]
 
+app = FastAPI(title="Olla Driver Churn prediction")
+
+@app.get("")
+def default_rt():
+    return {"message":"Olla Driving Churn Prediciton ML Model"}
