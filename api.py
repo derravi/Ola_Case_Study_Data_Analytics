@@ -16,16 +16,17 @@ except Exception as e:
 except Exception as e2:
     print(f"Error : {e2}")
 
+ 
+if data is None:
+    raise RuntimeError("Model not loaded properly")
+
 std = data["Standard_scaler"]
 lr = data["Logistic_regression"]
 
-
-std = data["Standard_scaler"]
-lr = data["Logistic_regression"]
 
 app = FastAPI(title="Olla Driver Churn prediction")
 
-@app.get("")
+@app.get("/")
 def default_rt():
     return {"message":"Olla Driving Churn Prediciton ML Model"}
 
