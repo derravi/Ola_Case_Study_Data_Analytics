@@ -23,9 +23,11 @@ if data is None:
 std = data["Standard_scaler"]
 lr = data["Logistic_regression"]
 
-
-app = FastAPI(title="Olla Driver Churn prediction")
-
+try:
+    app = FastAPI(title="Olla Driver Churn prediction")
+except Exception as ap:
+    print(f"Error:{ap}")
+    
 @app.get("/")
 def default_rt():
     return {"message":"Olla Driving Churn Prediciton ML Model"}
